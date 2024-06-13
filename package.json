@@ -1,0 +1,32 @@
+{
+  "name": "@xpify/hogia",
+  "version": "1.0.0",
+  "main": "web/index.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "serve": "npm --workspace=@xpify/hogia-node run serve",
+    "shopify": "shopify",
+    "build": "shopify app build",
+    "dev": "shopify app dev",
+    "info": "shopify app info",
+    "generate": "shopify app generate",
+    "deploy": "shopify app deploy",
+    "prisma": "npm --workspace=@xpify/hogia-node run prisma",
+    "cron": "npm --workspace=@xpify/hogia-node run cron:run",
+    "sdtout:log": "npm --workspace=@xpify/hogia-node run sdtout:log",
+    "tsc": "npm --workspace=@xpify/hogia-front run tsc"
+  },
+  "dependencies": {
+    "@shopify/app": "^3.56.3",
+    "@shopify/cli": "^3.56.3",
+    "@shopify/polaris": "^12.18.0",
+    "@shopify/polaris-icons": "^8.5.0"
+  },
+  "author": "kiz",
+  "private": true,
+  "workspaces": [
+    "extensions/*",
+    "web",
+    "web/frontend"
+  ]
+}

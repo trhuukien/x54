@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "outDir": "./",
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "rootDir": ".",
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "paths": {
+      "~/*": ["./*"]
+    },
+    "sourceMap": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "useDefineForClassFields": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "scripts",
+    "acceptance-tests",
+    "webpack",
+    "jest",
+    "src/setupTests.ts"
+  ],
+  "types": [
+    "typePatches"
+  ],
+  "files": [
+    "talons/settings/hogia/useHogia.ts",
+    "./context/settings.tsx",
+    "./utils/isEmpty.ts",
+    "./talons/Log/useJob.ts",
+    "./components/TaskProgress/pendingcard.tsx"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
