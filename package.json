@@ -20,7 +20,9 @@
     "@shopify/app": "^3.56.3",
     "@shopify/cli": "^3.56.3",
     "@shopify/polaris": "^12.18.0",
-    "@shopify/polaris-icons": "^8.5.0"
+    "@shopify/polaris-icons": "^8.5.0",
+    "request": "^2.88.2",
+    "uuid": "^11.0.3"
   },
   "author": "kiz",
   "private": true,

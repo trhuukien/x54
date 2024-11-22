@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
 import { getConfig, updateConfig } from '../config.js';
+import { getCustomerInvoice, updateCustomerInvoices } from '../customerInvoices.js';
 
-//getApiToken('offline_quickstart-249efe07.myshopify.com');
+const api_version = '2024-11-11';
 
 export async function getHogiaConfig(shop) {
   const hogiaConfig = await getConfig(shop, 'settings/hogia');
@@ -58,11 +59,11 @@ export async function getApiTokenData(client_id, client_secret) {
 export async function getVoucherDraft(props, voucherId) {
   const { token, guid } = props;
   
-  const url = `https://api.hogia.se/${guid}/voucherdrafts/${voucherId}?api-version=2024-06-12`;
+  const url = `https://api.hogia.se/${guid}/voucherdrafts/${voucherId}?api-version=${api_version}`;
   const options = {
     method: 'GET',
     headers: {
-      'api-version': '2024-06-12',
+      'api-version': `${api_version}`,
       'Authorization': `Bearer ${token}`
     }
   };
@@ -83,36 +84,123 @@ export async function getVoucherDraft(props, voucherId) {
 
 export async function createVoucherDraft(props, requestBody) {
   const { token, guid } = props;
+  await createCustomerPayment(props)
 
-  const url = `https://api.hogia.se/${guid}/voucherdrafts?api-version=2024-06-11`;
+  const url = `https://api.hogia.se/${guid}/voucherdrafts?api-version=${api_version}`;
   const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        'api-version': '2024-06-11'
-      },
-      body: JSON.stringify(requestBody)
+    method: 'POST',
+    headers: {
+      'api-version': `${api_version}`,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
   };
 
   try {
-      const response = await fetch(url, options);
-      if (response.status === 201) {
-          const uuid = await response.text();
-          console.log('Token:', token);
-          console.log('Created:', uuid);
-          return uuid;
-      } else {
-        const errorText = await response.text();
-        let errorData;
-        try {
-            errorData = JSON.parse(errorText);
-        } catch (e) {
-            errorData = errorText;
-        }
-        console.error('Error:', errorData);
+    const response = await fetch(url, options);
+    if (response.status === 201) {
+      const uuid = await response.text();
+      console.log('✅ ==> Voucher Draft Created:', uuid);
+      return uuid;
+    } else {
+      const errorText = await response.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch (e) {
+        errorData = errorText;
       }
+      console.error('==> Error:', errorData, response?.status);
+    }
   } catch (error) {
-      console.error('Error:', error);
+    console.error('==> Catch:', error);
   }
+}
+
+export async function createCustomerInvoices(props, requestBody) {
+  const { ssid, order_data, token, guid } = props;
+
+  const url = `https://api.hogia.se/${guid}/customerinvoices?api-version=${api_version}`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'api-version': `${api_version}`,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  };
+
+  console.log(JSON.stringify(requestBody));
+
+  fetch(url, options)
+  .then(async response => {
+    if (!response.ok) {
+      const error = await response.text(); 
+      throw new Error(`${response.status}: ${error}`);
+    }
+    return response.json();
+  })
+  .then(async data => {
+    console.log('✅ ==> Customer Invoice Created:', data?.id);
+
+    await updateCustomerInvoices(
+      ssid,
+      'pending',
+      order_data,
+      data
+    );
+
+    return data?.id;
+  })
+  .catch(e => {
+    console.error('==> Catch:', e);
+  });
+}
+
+export async function createCustomerPayment(props) {
+  const { ssid, order_id, token, guid } = props;
+  const customerInvoceDB = await getCustomerInvoice(ssid, order_id);
+  const invoice_id = customerInvoceDB?.invoice_id;
+  if (!invoice_id) {
+    return;
+  }
+
+  const url = `https://api.hogia.se/${guid}/customerinvoices/${invoice_id}/payments?api-version=${api_version}`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "payer": "Customer",
+      "date": new Date().toISOString().split('T')[0],
+      "amount": 1099,
+      "accountNumber": 3001,
+    })
+  };
+
+  fetch(url, options)
+  .then(async response => {
+    if (!response.ok) {
+      const error = await response.text(); 
+      throw new Error(`${response.status}: ${error}`);
+    }
+    return response.json();
+  })
+  .then(async data => {
+    console.log('✅ ==> Customer Payment Created:', data?.id);
+    await updateCustomerInvoices(
+      ssid,
+      'done',
+      JSON.parse(customerInvoceDB?.order_data ?? ''),
+      data
+    );
+    return data?.id;
+  })
+  .catch(e => {
+    console.error('❌ ==> Catch:', e);
+  });
 }

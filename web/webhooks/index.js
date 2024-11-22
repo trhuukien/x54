@@ -3,4 +3,4 @@
  */
 
 export { default as PrivacyWebhookHandlers } from './privacy.js';
-export { default as OrdersCreateWebhookHandlers } from './ordersCreate.js';
+export { default as OrdersUpdatedWebhookHandlers } from './orders-updated.js';

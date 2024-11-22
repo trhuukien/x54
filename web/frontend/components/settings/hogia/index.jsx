@@ -29,20 +29,20 @@ const HogiaUI = props => {
             ref={ref => registerField('client_id', ref)}
             label={"Client ID"}
             autoComplete={'off'}
-            initValue={config.client_id}
+            initValue={config?.client_id}
           />
           <CustomTextField
             ref={ref => registerField('client_secret', ref)}
             label={"Client Secret"}
             type='password'
             autoComplete={'off'}
-            initValue={config.client_secret}
+            initValue={config?.client_secret}
           />
           <CustomTextField
             ref={ref => registerField('guid', ref)}
             label={"GUID"}
             autoComplete={'off'}
-            initValue={config.guid}
+            initValue={config?.guid}
           />
           <TestConnectionButton buildBody={buildConfig} />
         </BlockStack>

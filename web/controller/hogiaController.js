@@ -7,6 +7,7 @@ export const verifyConnection = async (req, res) => {
     const token = await getApiTokenData(client_id, client_secret);
 
     if (token?.access_token) {
+      console.log('Token: ', token.access_token);
       res.status(200).send({
         success: true,
         message: 'Connection successful.',

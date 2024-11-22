@@ -7,7 +7,7 @@ import http from "http";
 import { verifyConnection} from './controller/hogiaController.js';
 
 import shopify from "./shopify.js";
-import { PrivacyWebhookHandlers, OrdersCreateWebhookHandlers } from "./webhooks/index.js";
+import { PrivacyWebhookHandlers, OrdersUpdatedWebhookHandlers } from "./webhooks/index.js";
 import { getStoreConfig, storeConfig } from './controller/storeSettingsController.js';
 
 const PORT = parseInt(
@@ -32,7 +32,7 @@ app.get(
 );
 app.post(
   shopify.config.webhooks.path,
-  shopify.processWebhooks({ webhookHandlers: { ...PrivacyWebhookHandlers, ...OrdersCreateWebhookHandlers } })
+  shopify.processWebhooks({ webhookHandlers: { ...PrivacyWebhookHandlers, ...OrdersUpdatedWebhookHandlers } })
 );
 
 // If you are adding routes outside of the /api path, remember to

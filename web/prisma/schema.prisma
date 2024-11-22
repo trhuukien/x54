@@ -31,3 +31,17 @@ model Config {
 
   @@unique([session_id, path])
 }
+
+model CustomerInvoices {
+  id            Int     @id @default(autoincrement())
+  session_id    String
+  order_id      String
+  invoice_id    String
+  order_data    String?  @db.Text
+  invoice_data  String?  @db.Text
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([session_id, order_id])
+}
